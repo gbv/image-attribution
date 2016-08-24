@@ -1,10 +1,14 @@
 language: php
 php:
-    - 5.6
-    - 7.0
-
+- 5.6
+- 7.0
 install:
-    - composer install --no-interaction
-
+- composer install --no-interaction
 script:
-    - composer test
+- composer test
+deploy:
+  provider: heroku
+  on: master
+  skip_cleanup: true
+  api_key:
+    secure: QuETsn0VBuOb0GJ5X5Dd8DLbxAP2pdgjGIQ4vF8CXYfwi0MgVsChVaTm7335QQ+lC15FtdL90uN1JxKHUsaCkbmsrq9N9idGcFbpQiHPxypT3ru9ViCfQ9Bfox8eWF0Xxies6lNEdJr6wFo+CqVCQB8F24k3TXMLlnnH2Q7O6JyxBuYD/wDEKzq4zt779vT/CGo5SH5CPbI9bewZrOWLYw14aI9iAtGoPb+rYKSTKalhd1bGtJ+7MJkttMhP2KdrYaDbqRib5sDBbu45mLwtajidb2flLynxcTgpXk8ZZivcv1K0b6RX0NkbUz1Kv+KDMwq/lGDXCiS8QCz16CnTaPaOBpstpjSUR0x/DnEy7rKsqpBiTg9Vuo7kKkuAs2aNPzIxfz/Xcr5ZtsWDs+djxOm2I8p14YLXF9qKy+cKmbP3jl5JE7a6VYwc+H0GrVmI5jBTwEyasJXvDY0u+rknBF4XvtVWZiQYLikkR8FdrqHl1z0WGnklOQB8lM+Latvgp5m3qNUTiQzgMlsyiZJMPSq3GF0XM/JqDuRpo6aYqMIPN1usdTp61kHZ7ivd8dPz+Kk7WZVqLyKYJQGG91sQYliwDmvj6yHG7s8TCXzjJHR602l0vxdh3CFk5Y7k5I3K4ofcA5Tk7loYijLcQ6rYpdqO4eJKBOzArpqltoxqbx0=

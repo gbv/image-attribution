@@ -55,5 +55,7 @@ The image can be passed as file name, full image URL or URL of the image page.
 
 ## Examples
 
-Directory `example` includes a web service to query image attribution information as JSON. The service is deployed at <https://image-attribution.herokuapp.com> but may be slow or down from time to time. Please install at your own server if you need to use it frequently!
+Directory `example` includes a web service to query image attribution information as JSON. The service is deployed at <https://image-attribution.herokuapp.com> but may be slow or down from time to time. Please install at your own server if you need to use it frequently! To give an example:
+
+* <https://image-attribution.herokuapp.com/?image=Wikimedia-logo.svg>
 
