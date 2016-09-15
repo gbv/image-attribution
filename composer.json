@@ -16,6 +16,9 @@
             "email": "voss@gbv.de"
         }
     ],
+    "bin": [
+        "bin/image-attribution"
+    ],
     "autoload": {
         "files": [
             "src/image-attribution.php"

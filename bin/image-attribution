@@ -1,0 +1,24 @@
+#!/usr/bin/env php
+<?php
+
+/**
+ * Image attribution command line script.
+ */
+
+require_once __DIR__.'/../src/image-attribution.php';
+
+$image = @$argv[1];
+$attribution = commons_image_attribution($image);
+
+if (!$attribution) {
+    $msg = "image not found!";
+    if (posix_isatty(STDERR)) {
+        $msg = "\033[31m$msg\033[0m";
+    }
+    fwrite(STDERR,"$msg\n");
+    exit(1);
+}
+
+$json = json_encode($attribution, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+
+print $json;

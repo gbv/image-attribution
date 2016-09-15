@@ -1,5 +1,7 @@
 <?php
 
+include_once __DIR__.'/identify-open-content-license.php';
+
 /**
  * Get image attribution information for files at Wikimedia Commons.
  *
@@ -11,30 +13,41 @@
  *  image attribution information on success.
  */
 function commons_image_attribution($file) {
-    if (!$file) return;
 
-    if (preg_match(
-        '!^https?://(commons\.wikimedia\.org/wiki/File:|upload\.wikimedia\.org.+/)(.+)!',
-        $file, $match)) {
-        $file = $match[2];
+    static $baseURL      = 'https://commons.wikipedia.org/w/api.php';
+    static $commonsRegex = '!^https?://(commons\.wikimedia\.org/wiki/File:|upload\.wikimedia\.org.+/)(.+)!';
+
+    $query = [
+        'action' => 'query',
+        'prop'   => 'imageinfo',
+        'iiprop' => 'url|extmetadata',
+        'format' => 'json',
+#        'iiextmetadatalanguage' => 'de',
+        'iiextmetadatafilter' => 'LicenseShortName|UsageTerms|AttributionRequired|Restrictions|Artist|ImageDescription|DateTimeOriginal'
+    ];
+
+    if (isset($file)) {
+        if (preg_match($commonsRegex, $file, $match)) {
+            $file = $match[2];
+        }
+        $query['titles'] = "File:$file";
+    } else {
+        $query['generator']    = 'random';
+        $query['grnnamespace'] = '6';
+        $query['grnlimit']     = '1';
     }
 
-    $baseURL = "https://commons.wikipedia.org/w/api.php";
-    $query   = http_build_query([
-        "action" => "query",
-        "prop"   => "imageinfo",
-        "iiprop" => "url|extmetadata",
-        "titles" => "File:$file",
-        "format" => "json",
-#        "iiextmetadatalanguage" => "de",
-        "iiextmetadatafilter" => "LicenseShortName|UsageTerms|AttributionRequired|Restrictions|Artist|ImageDescription|DateTimeOriginal"
-    ]);
-
     // just use plain old file_get_contents
+    $url = $baseURL.'?'.http_build_query($query);
     try {
-        $json = @file_get_contents($baseURL.'?'.$query);
+        $json = @file_get_contents($url);
         $data = @json_decode($json,true);
-        $image = array_values($data['query']['pages'])[0]['imageinfo'][0];
+        $data = array_values($data['query']['pages'])[0];
+        if (!isset($data['missing']) && isset($data['imageinfo'])) {
+            $image = $data['imageinfo'][0];
+        } else {
+            return;
+        }
     } catch(Exception $e) {
         return;
     }
@@ -43,38 +56,67 @@ function commons_image_attribution($file) {
 
     $meta = $image['extmetadata'];
 
+    // strip/convert HTML tags/entities
     foreach( $meta as $key => $value) {
-        $meta[$key] = strip_tags($value['value']);
+        $value = strip_tags($value['value']);
+        $value = html_entity_decode($value, ENT_QUOTES | ENT_HTML401 | ENT_XHTML | ENT_HTML5, 'UTF-8');
+        $meta[$key] = trim($value);
     }
 
     # attribution
-    $atb = [
+    $attrib = [
         'src'         => $image['url'],
         'url'         => $image['descriptionurl'],
-        'description' => $meta['ImageDescription'],
-        'creator'     => $meta['Artist'],
-        'date'        => $meta['DateTimeOriginal'],
-        'attribution' => !!preg_match('/true/i',$meta['AttributionRequired']),
-        'license'     => $meta['LicenseShortName'],
+        'attribution' => isset($meta['AttributionRequired'])
+            ? !!preg_match('/true/i',$meta['AttributionRequired'])
+            : null,
         #'usage'       => $meta['UsageTerms'], # not required actually
-        'restriction' => $meta['Restrictions'], # e.g. trademarked (multiple combined by '|')
     ];
 
-    if (!$atb['license']) {
-        return;
+    // these fields happen to be missing in some cases
+    $map = [
+        'DateTimeOriginal' => 'date',
+        'ImageDescription' => 'description',
+        'Artist'           => 'creator',
+        'LicenseShortName' => 'license',
+        'Restrictions'     => 'restrictions', # e.g. trademarked (multiple combined by '|')
+    ];
+
+    foreach ($map as $from => $to) {
+        $attrib[$to] = isset($meta[$from]) ? $meta[$from] : null;
     }
 
-    foreach( $atb as $key => $value) {
-        if ($value === null || $value === "") {
-            unset($atb[$key]);
+    // treat empty strings as missing fields
+    foreach( $attrib as $key => $value) {
+        if ($value === "") {
+            $attrib[$key] = null;
         }
     }
 
-    if (!$atb['creator'] && $atb['attribution']) {
-        $atb['creator'] = "Wikimedia Commons";
+    // normalize license short name
+    if ($attrib['license']) {
+        $attrib['license'] = open_content_license_uri($attrib['license']);
     }
 
-    $atb['credit'] = $atb['license'] . ': ' . $atb['creator'];
+    if ($attrib['license'] && preg_match('/http:\/\/creativecommons.org\/licenses\/([^\/]*sa)?\//',$attrib['license'], $match)) {
+        $attrib['sharealike'] = !!$match[1];
+    }
 
-    return $atb;
+    if ($attrib['creator'] === null && $attrib['attribution']) {
+        $attrib['creator'] = "Wikimedia Commons";
+    }
+
+    // see <https://commons.wikimedia.org/wiki/Commons:Credit_line>
+    if ($attrib['license'] && $attrib['creator'] !== null) {
+        $license = open_content_license_name($attrib['license']);
+        if (!$license) $license = $attrib['license'];
+        $attrib['credit'] = $attrib['creator'] . " / $license";
+    } 
+    // attribution unknown
+    elseif ($attrib['attribution'] === null and $attrib['creator'] !== null) {
+        $attrib['credit'] = $attrib['creator'] . " / see license at Wikimedia Commons";
+    }
+
+    return $attrib;
 }
+

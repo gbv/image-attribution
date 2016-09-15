@@ -1,8 +1,13 @@
 <?php
 
-require_once '../src/image-attribution.php';
+/**
+ * Image attribution webservice.
+ */
 
-$attribution = commons_image_attribution( @$_GET['image'] );
+require_once __DIR__.'/../src/image-attribution.php';
+
+$image = @$_GET['image'];
+$attribution = commons_image_attribution($image);
 
 if ($attribution) {
     $attribution = [$attribution];
