@@ -10,15 +10,15 @@ class TestImageAttribution extends TestCase {
                 'Wikimedia-logo.svg', [
                     'src' => 'https://upload.wikimedia.org/wikipedia/commons/8/81/Wikimedia-logo.svg',
                     'url' => 'https://commons.wikimedia.org/wiki/File:Wikimedia-logo.svg',
-                    'license' => 'Public domain',
-                    'restriction' => 'trademarked',
+                    'license' => 'https://creativecommons.org/publicdomain/mark/1.0/',
+                    'restrictions' => 'trademarked',
                     'attribution' => FALSE,
                 ]
             ],
             [ 
                 'https://commons.wikimedia.org/wiki/File:Loewe_frontal.JPG', [
-                    'credit'      => 'CC BY-SA 3.0: Martin Falbisoner',
-                    'license'     => 'CC BY-SA 3.0',
+                    'credit'      => 'Martin Falbisoner / CC BY-SA 3.0',
+                    'license'     => 'http://creativecommons.org/licenses/by-sa/3.0/',
                     'creator'     => 'Martin Falbisoner',
                     'attribution' => TRUE,
                 ]
