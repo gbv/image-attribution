@@ -12,7 +12,7 @@
     <div id="content">
       <div id="player">
         <button ng-click="startStop()" ng-class="pause ? 'start' : 'stop'" style="float:right"></button>
-        <a href="">image-attribution demo</a>
+        <a href="https://github.com/gbv/image-attribution">image-attribution demo</a>
       </div>
       <div image-attribution="image">
         <p>
