@@ -4,7 +4,8 @@ This changelog tracks features and fixes of image-attribution PHP library.
 
 ## Unreleased
 
-* ...
+* new field `license_name`
+* extend example as better demo
 
 ## 0.2.0
 

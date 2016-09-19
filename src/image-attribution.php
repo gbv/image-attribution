@@ -106,11 +106,12 @@ function commons_image_attribution($file) {
         $attrib['creator'] = "Wikimedia Commons";
     }
 
+    $attrib['license_name'] = open_content_license_name($attrib['license']);
+
     // see <https://commons.wikimedia.org/wiki/Commons:Credit_line>
     if ($attrib['license'] && $attrib['creator'] !== null) {
-        $license = open_content_license_name($attrib['license']);
-        if (!$license) $license = $attrib['license'];
-        $attrib['credit'] = $attrib['creator'] . " / $license";
+        $attrib['credit'] = $attrib['creator'] . " / " .
+            $attrib[ $attrib['license_name'] ? 'license_name' : 'license' ];
     } 
     // attribution unknown
     elseif ($attrib['attribution'] === null and $attrib['creator'] !== null) {
