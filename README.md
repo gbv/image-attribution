@@ -51,21 +51,27 @@ The image can be passed as file name, full image URL or URL of the image page. T
  field        | content 
 --------------|---------------------------------------------------------------------
 `src`         | URL of the image file
-`page`        | URL of the image description page
+`url`         | URL of the image description page
 `license`     | URI of the license or `null` if unknown
+`license_name`| short name of the license or `null` if unknown
 `attribution` | boolean value whether attribution is required, or `null` if unknown
 `sharealike`  | boolean value whether share-alike is required, or `null` if unknown
 `creator`     | creator of the image, or `null` if unknown
-`credit`      | credit string to give attribution with license and creator 
+`credit`      | credit string to give attribution with creator and license
 `description` | image description as plain string, or `null` if unknown
 `date`        | date of the image as plain string, or `null` if unknown
 `restrictions`| additional restrictions, such as "trademarked", or `null`
+`name`        | (file)name of the image
+`mime`        | image mime type
+`size`        | image size in bytes
+`width`       | image width in pixels
+`height`      | image height in pixels
 
 ## Examples
 
-Directory `example` includes a web service (`index.php`) to query image attribution information as JSON. The service is deployed at <https://image-attribution.herokuapp.com> but may be slow or down from time to time. Please install at your own server if you need to use it frequently! To give an example:
+Directory `example` includes a web service (`index.php`) to query image attribution information as JSON. The service is deployed at <https://image-attribution.herokuapp.com/> but may be slow or down from time to time. Please install at your own server if you need to use it frequently! To give an example:
 
-* <https://image-attribution.herokuapp.com/?image=Wikimedia-logo.svg>
+* <https://image-attribution.herokuapp.com/?api.php?image=Wikimedia-logo.svg>
 
 Directory `bin` contains a command line script to get image attribution:
 

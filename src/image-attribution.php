@@ -20,7 +20,7 @@ function commons_image_attribution($file) {
     $query = [
         'action' => 'query',
         'prop'   => 'imageinfo',
-        'iiprop' => 'url|extmetadata',
+        'iiprop' => 'url|dimensions|mime|extmetadata',
         'format' => 'json',
 #        'iiextmetadatalanguage' => 'de',
         'iiextmetadatafilter' => 'LicenseShortName|UsageTerms|AttributionRequired|Restrictions|Artist|ImageDescription|DateTimeOriginal'
@@ -63,10 +63,16 @@ function commons_image_attribution($file) {
         $meta[$key] = trim($value);
     }
 
+
     # attribution
     $attrib = [
         'src'         => $image['url'],
         'url'         => $image['descriptionurl'],
+        'mime'        => $image['mime'],
+        'size'        => $image['size'],
+        'wdith'       => $image['width'],
+        'height'      => $image['height'],
+        'name'        => preg_replace('/^http.+\/File:/','', $image['descriptionurl']),
         'attribution' => isset($meta['AttributionRequired'])
             ? !!preg_match('/true/i',$meta['AttributionRequired'])
             : null,
