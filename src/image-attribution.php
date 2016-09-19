@@ -70,7 +70,7 @@ function commons_image_attribution($file) {
         'url'         => $image['descriptionurl'],
         'mime'        => $image['mime'],
         'size'        => $image['size'],
-        'wdith'       => $image['width'],
+        'width'       => $image['width'],
         'height'      => $image['height'],
         'name'        => preg_replace('/^http.+\/File:/','', $image['descriptionurl']),
         'attribution' => isset($meta['AttributionRequired'])
