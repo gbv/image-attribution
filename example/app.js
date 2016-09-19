@@ -7,6 +7,9 @@ angular.module('app', [])
 
   $scope.startStop = function() {
     $scope.pause = !$scope.pause;
+    if (!$scope.pause) {
+      updateImage();
+    }
   };
 
   function nextImage() {

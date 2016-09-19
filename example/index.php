@@ -41,7 +41,7 @@
         </p>
         <p>
           <span class="date" ng-if="image.date">{{image.date}} </span>
-          ({{image.width}}x{{image.height}})
+          <span ng-if="image.width>0 && image.height>0"> ({{image.width}}x{{image.height}})</span>
           <!-- TODO: mime and size -->
         </p>
         <p class="restrictions" ng-if="image.restrictions">{{image.restrictions}}</p>
