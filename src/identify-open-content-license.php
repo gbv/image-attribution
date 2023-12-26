@@ -66,7 +66,17 @@ function open_content_license_uri($license) {
  	}
 	// TODO: GFLD and other licenses 
 	else {
-		return;
+		// https://www.gnu.org/licenses/
+		// return ;
+		if (preg_match('/(fdl|lgpl|gpl|agpl)(|[\s])(\d.\d)$/', $license,$match)) {
+			$type 	 = $match[1] ? $match[1] : '';
+			$version = $match[3] ? $match[3] : '';
+			return "https://www.gnu.org/licenses/$type-$version.html";
+		}
+		else{
+		// return other license  	
+		return $license;
+		}
 	}	
 }
 
