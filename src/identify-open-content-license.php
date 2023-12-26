@@ -13,6 +13,10 @@ function open_content_license_name($uri) {
         $license = "CC ".strtoupper($match[1])." ".$match[4];
         if (isset($match[6])) $license .= " ".$match[6];
         return $license;
+	} else if(preg_match('/^https:\/\/www\.gnu\.org\/licenses\/(fdl|lgpl|gpl|agpl)-(\d.\d)/',$uri,$match)) {
+		$license = " GNU ".strtoupper($match[1])." ";
+		if (isset($match[1])) $license .= " ".$match[2];
+		return $license;
     } else {
         return;
     }
@@ -66,7 +70,17 @@ function open_content_license_uri($license) {
  	}
 	// TODO: GFLD and other licenses 
 	else {
-		return;
+		// https://www.gnu.org/licenses/
+		// return ;
+		if (preg_match('/(fdl|lgpl|gpl|agpl)(|[\s])(\d.\d)$/', $license,$match)) {
+			$type 	 = $match[1] ? $match[1] : '';
+			$version = $match[3] ? $match[3] : '';
+			return "https://www.gnu.org/licenses/$type-$version.html";
+		}
+		else{
+		// return other license  	
+		return $license;
+		}
 	}	
 }
 
