@@ -13,6 +13,10 @@ function open_content_license_name($uri) {
         $license = "CC ".strtoupper($match[1])." ".$match[4];
         if (isset($match[6])) $license .= " ".$match[6];
         return $license;
+	} else if(preg_match('/^https:\/\/www\.gnu\.org\/licenses\/(fdl|lgpl|gpl|agpl)-(\d.\d)/',$uri,$match)) {
+		$license = " GNU ".strtoupper($match[1])." ";
+		if (isset($match[1])) $license .= " ".$match[2];
+		return $license;
     } else {
         return;
     }
